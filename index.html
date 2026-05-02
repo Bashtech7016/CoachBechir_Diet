@@ -149,6 +149,37 @@
   .form-btn:hover { transform:scale(1.02); box-shadow:var(--glow); }
   .form-error { color:var(--red); font-size:0.8rem; margin-top:6px; display:none; }
 
+  /* FULL PAGE LOCK SCREEN */
+  #lockScreen {
+    position: fixed; inset: 0; z-index: 9999;
+    background: var(--dark);
+    display: flex; align-items: center; justify-content: center;
+    flex-direction: column;
+  }
+  #lockScreen::before {
+    content:'';
+    position:fixed; inset:0;
+    background:
+      radial-gradient(ellipse 80% 50% at 50% -10%, rgba(0,229,255,0.1) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 40% at 90% 80%, rgba(0,180,200,0.07) 0%, transparent 50%);
+    pointer-events:none;
+  }
+  .lock-box {
+    background: var(--dark2);
+    border: 1.5px solid var(--cyan);
+    border-radius: 28px;
+    padding: 40px 32px;
+    width: 90%; max-width: 400px;
+    box-shadow: 0 0 80px rgba(0,229,255,0.18);
+    text-align: center;
+    position: relative; z-index: 1;
+    animation: slideUp 0.4s ease;
+  }
+  .lock-logo { font-size:1.4rem; font-weight:900; color:var(--cyan); letter-spacing:4px; margin-bottom:6px; text-shadow:0 0 30px rgba(0,229,255,0.5); }
+  .lock-icon { font-size:3rem; margin-bottom:14px; }
+  .lock-title { font-size:1.1rem; font-weight:800; color:var(--text); margin-bottom:6px; }
+  .lock-sub { font-size:0.82rem; color:var(--text-dim); margin-bottom:24px; line-height:1.5; }
+
   /* PASSWORD SCREEN */
   .pw-screen { text-align:center; }
   .pw-icon { font-size:3rem; margin-bottom:12px; }
@@ -412,6 +443,20 @@
 </style>
 </head>
 <body>
+
+<!-- FULL PAGE LOCK SCREEN -->
+<div id="lockScreen">
+  <div class="lock-box">
+    <div class="lock-logo">Coach Béchir 7016</div>
+    <div class="lock-icon">🔒</div>
+    <div class="lock-title">محتوى خاص</div>
+    <div class="lock-sub">هذه الخطة الغذائية مخصصة لك فقط.<br>أدخل كلمة المرور للوصول.</div>
+    <input type="password" class="pw-input" id="lockInput" placeholder="••••••••••"
+      onkeydown="if(event.key==='Enter')checkLock()" autofocus />
+    <div class="form-error" id="lockError" style="display:none;text-align:center;margin-bottom:8px;">كلمة المرور غير صحيحة ❌</div>
+    <button class="form-btn" onclick="checkLock()">دخول 🚀</button>
+  </div>
+</div>
 
 <!-- TOAST -->
 <div class="toast" id="toast">✅ تم تحديث الخطة بنجاح!</div>
@@ -897,6 +942,25 @@
 </footer>
 
 <script>
+// ─── LOCK SCREEN ─────────────────────────────────────────────────────────────
+const LOCK_PASSWORD = "BashDiet26";
+
+function checkLock() {
+  const val = document.getElementById("lockInput").value;
+  if (val === LOCK_PASSWORD) {
+    const ls = document.getElementById("lockScreen");
+    ls.style.transition = "opacity 0.5s";
+    ls.style.opacity = "0";
+    setTimeout(() => ls.remove(), 500);
+  } else {
+    const inp = document.getElementById("lockInput");
+    inp.classList.add("shake");
+    document.getElementById("lockError").style.display = "block";
+    inp.value = "";
+    setTimeout(() => inp.classList.remove("shake"), 500);
+  }
+}
+
 // ─── DEFAULT (BASHIR) DATA ───────────────────────────────────────────────────
 const DEFAULT = {
   name: 'بشير',
